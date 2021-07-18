@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+
+    <img class="landing-page-image" src="{{ url_for('static', filename='img/become_tutor_img.svg') }}" alt="Welcome" style="text-align: center;" >
+
+    <br>
+    <h1 style="text-align: center;">Become a Tutor</h1>
+    <br>  
+<form action="#" method="POST">
+    <div class="form-group">
+        <label>Name</label>
+        <input type="text" maxlength="64" name="name" id="username" class="form-control" placeholder="Enter your username">
+    </div>
+    <div class="form-group">
+        <label>Phone Number</label>
+        <input type="tel" pattern="[0-9]{10}" name="phone-number" class="form-control" placeholder="Phone Number">
+    </div>
+    <div class="form-group">
+        <label>Rate</label>
+        <input type="text" name="pay" class="form-control" placeholder="Rate">
+    </div>
+    <div class="form-group">
+        <label>Description</label>
+        <textarea name="description" maxlength="10000" class="form-control" rows="4"></textarea>
+    </div>
+    <select name="subject">
+        <option value="" selected>Please select a subject</option>
+        <option value="Math">Math</option>
+        <option value="English">English</option>
+        <option value="Physics">Physics</option>
+        <option value="French">French</option>
+        <option value="Science">Science</option>
+        <option value="Spanish">Spanish</option>
+        <option value="Computer Science">Computer Science</option>
+    </select>
+    <select name="grade">
+        <option value="" selected>Please select a grade</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+    </select>
+    <div class="form-group">
+        <label>Profile Picture</label>
+        <input maxlength="5000" type="text" name="image" class="form-control" placeholder="Image URL (leave blank for no image)">
+    </div>
+    <button type="submit" class="btn btn-primary mb-5">Become a Tutor</button>
+</form>
+
+{% endblock content %}

@@ -1,0 +1,41 @@
+<!--
+    Register page
+-->
+{% extends 'base.html' %}
+{% block content %}
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+
+    <img class="landing-page-image" src="{{ url_for('static', filename='img/welcome.svg') }}" alt="Welcome" style = "text-align: center;">
+
+    <br>
+    <br>
+
+    <h1 style="text-align: center;">Register</h1>
+
+    <br>
+
+    <form action="#" method="POST">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" maxlength="64" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+        </div>
+        <div class="form-group">
+            <label>Email address</label>
+            <input type="email" maxlength="64" name="email" id="email" class="form-control" placeholder="Enter your email" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" maxlength="64" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+        </div>
+        <div class="form-group">
+            <label>Confirm password</label>
+            <input type="password" maxlength="64" name="confirm-password" id="confirm-password" class="form-control" placeholder="Enter your password again" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Sign up</button>
+    </form>
+
+    <br>
+    <br>
+
+{% endblock content %}

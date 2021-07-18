@@ -1,0 +1,94 @@
+<!--
+    Tutors page
+-->
+{% extends 'base.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tutors.css') }}">
+
+<form id="getTutorForm" action="#" method="POST">
+    <select class="mr-2 p-1 cat-drop" name="subject">
+        {% for subject in subjects %}
+            {% if subject == subject_selected %}
+                <option value="{{ subject }}" selected>{{ subject }}</option>
+            {% else %}
+                <option value="{{ subject }}">{{ subject }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <select class="mr-2 p-1 cat-drop" name="grade">
+        {% for grade in grades %}
+            {% if grade == grade_selected %}
+                <option value="{{ grade }}" selected>{{ grade }}</option>
+            {% else %}
+                <option value="{{ grade }}">{{ grade }}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-primary">Find</button>
+</form>
+
+<div class="tutor-wrapper">
+    {% if tutors %}
+        {% for tutor in tutors %}
+        <div class="tutor-animation"
+            data-aos="fade-up"
+            data-aos-duration="1000"
+        >
+            <div class="tutor my-5">
+                <a href="/tutors/{{ tutor.id }}">
+                <div class="alert alert-dark p-5" role="alert">
+                    <h4 class="alert-heading">{{ tutor.name }}</h4>
+
+                    <!-- stars -->
+                    {% for i in range(0, tutor.average_stars) %}
+                        <i class="bi bi-star-fill"></i>
+                    {% endfor %}
+                    {% for i in range(0, 5-tutor.average_stars) %}
+                        <i class="bi bi-star"></i>
+                    {% endfor %}
+
+                    <p>
+                        <strong>Subject:</strong> Grade {{ tutor.grade }} {{ tutor.subject }}
+                        {% if tutor.subject == 'Math' %}
+                            <i class="bi bi-calculator"></i>
+                        {% elif tutor.subject == 'English' %}
+                            <i class="bi bi-book"></i>
+                        {% elif tutor.subject == 'Physics' %}
+                            <i class="fas fa-atom"></i>
+                        {% elif tutor.subject == 'French' %}
+                            <i class="bi bi-translate"></i>
+                        {% elif tutor.subject == 'Science' %}
+                            <i class="fas fa-flask"></i>
+                        {% elif tutor.subject == 'Spanish' %}
+                            <i class="bi bi-translate"></i>
+                        {% elif tutor.subject == 'Computer Science' %}
+                            <i class="bi bi-laptop"></i>
+                        {% endif %}
+                    </p>
+
+                    <hr>
+                    <p class="mb-0">{{ tutor.description }}</p>
+
+                    {% if tutor.image %}
+                        <div class="tutors-img-wrapper">
+                            <img src="{{ tutor.image }}" alt="" class="tutor-img">
+                            <!-- Frontend JS inserts image here -->
+                        </div>
+                    {% endif %}
+                </div>
+                </a>
+
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-dark p-2 my-3" role="alert">
+            There are currently no tutors in this category.
+        </div>
+    {% endif %}
+</div>
+
+<script src="https://kit.fontawesome.com/9d9f4d1b26.js" crossorigin="anonymous"></script>
+
+{% endblock content %}

@@ -1,0 +1,47 @@
+.intro-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    align-items: center;
+}
+
+.tutor-img {
+    object-fit: contain;
+    border-radius: 30px;
+    max-height: 300px;
+    margin-bottom: 30px;
+    margin-right: 20px;
+}
+
+.stars {
+    display: flex;
+    margin-top: -10px;
+    margin-bottom: 30px;
+}
+
+.star {
+    appearance: none;
+    visibility:hidden;
+    font-size:30px;
+    cursor:pointer;
+    margin-right: 10px;
+    transition: 0.2s all;
+}
+
+.star:before {
+   content: "\2606";
+   visibility:visible;
+}
+
+.star:hover {
+    color: gold;
+}
+
+.star:checked:before {
+   content: "\2605";
+   color: gold;
+}
+
+.biography-text{
+    align-content: left;
+}

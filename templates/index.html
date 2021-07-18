@@ -1,0 +1,24 @@
+<!--
+    Homepage
+-->
+{% extends 'base.html' %}
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+<div class="text-center"
+    data-aos="fade-right"
+    data-aos-duration="1000"
+>
+<img class="landing-page-image" src="{{ url_for('static', filename='img/landingpage_img.svg') }}" alt="Teacher">
+
+
+<div class="text-center">
+    {% if 'user' in session %}
+        <a href="{{ url_for('tutors') }}" role="button" class="btn btn-outline-primary" style="margin-top: 10px;">View Tutors</a>
+    {% else %}
+        <a href="{{ url_for('login') }}" role="button" class="btn btn-outline-primary" style="margin-top: 10px; margin-right: 10px;">Login</a>
+        <a href="{{ url_for('register') }}" role="button" class="btn btn-outline-success" style="margin-top: 10px;">Register</a>
+    {% endif %}
+</div>
+{% endblock content %}
