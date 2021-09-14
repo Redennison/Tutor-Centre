@@ -26,7 +26,7 @@ App config
 '''
 
 app = Flask(__name__)
-app.confic['SECRET_KEY'] = 'a' # use in testing, uncomment next line in production
+app.config['SECRET_KEY'] = 'a' # use in testing, uncomment next line in production
 # app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # Database config
