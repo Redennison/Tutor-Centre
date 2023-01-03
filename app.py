@@ -356,5 +356,5 @@ def logout():
 
 if __name__ == '__main__':
 
-    app.run(debug=True, host='0.0.0.0') # use in testing, uncomment next line in production
-    # app.run(debug=False)
+    #app.run(debug=True, host='0.0.0.0') # use in testing, uncomment next line in production
+    app.run(debug=False)
