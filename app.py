@@ -9,7 +9,7 @@ Authors: Jason, Evan, Raghav, Amogh
 '''
 
 
-
+from setuptools import setup
 from flask import Flask, render_template, url_for, request, redirect, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import hashlib
