@@ -36,6 +36,11 @@ db = SQLAlchemy(app)
 '''
 ------------------------------
 '''
+setup(
+...,
+license_file=LICENSE.txt,
+...
+)
 
 def toHash(value:str):
     '''
