@@ -329,7 +329,6 @@ def register():
             hashPass = toHash(password)
 
             user = User(username=username, password=hashPass, email=email)
-            print('hello')
             db.session.add(user)
             db.session.commit()
 
