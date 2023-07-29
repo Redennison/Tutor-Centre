@@ -39,7 +39,6 @@ db = SQLAlchemy(app)
 setup(
 ...,
 license_file=LICENSE.txt,
-license_files=LICENSE.txt
 ...
 )
 
