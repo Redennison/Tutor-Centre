@@ -20,16 +20,11 @@ import pymongo
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 
-cluster = MongoClient("mongodb+srv://evan:ueWoDdHKcZ5E0Ln1@cluster0.cwhuk86.mongodb.net/?retryWrites=true&w=majority")
+cluster = MongoClient(os.getenv('MONGO_URL'))
 db = cluster["tutor-centre"]
 users = db["users"]
 tutors_db = db["tutors"]
 reviews = db["reviews"]
-
-# MongoDB
-# USername: evan
-# Password: ueWoDdHKcZ5E0Ln1
-# mongodb+srv://evan:<password>@cluster0.cwhuk86.mongodb.net/?retryWrites=true&w=majority
 
 '''
 App config
