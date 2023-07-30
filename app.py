@@ -17,8 +17,20 @@ import os
 import random
 import json
 import requests
+import pymongo
+from pymongo import MongoClient
+from bson.objectid import ObjectId
 
+cluster = MongoClient("mongodb+srv://evan:ueWoDdHKcZ5E0Ln1@cluster0.cwhuk86.mongodb.net/?retryWrites=true&w=majority")
+db = cluster["tutor-centre"]
+users = db["users"]
+tutors_db = db["tutors"]
+reviews = db["reviews"]
 
+# MongoDB
+# USername: evan
+# Password: ueWoDdHKcZ5E0Ln1
+# mongodb+srv://evan:<password>@cluster0.cwhuk86.mongodb.net/?retryWrites=true&w=majority
 
 '''
 App config
@@ -27,11 +39,6 @@ App config
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
-# Database config
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
 '''
 ------------------------------
@@ -46,35 +53,6 @@ def toHash(value:str):
     '''
     hash_obj = hashlib.sha256(bytes(value, 'utf8'))
     return hash_obj.hexdigest()
-
-# Database models
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(64))
-    email = db.Column(db.String(64))
-    password = db.Column(db.String(64))
-
-class Tutor(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    email = db.Column(db.String(64))
-    phone_number = db.Column(db.String(10))
-    pay = db.Column(db.Integer)
-    description = db.Column(db.String(10000))
-    subject = db.Column(db.String(100))
-    grade = db.Column(db.Integer)
-    average_stars = db.Column(db.Integer)
-    image = db.Column(db.String(5000))
-    num_stars = db.Column(db.Integer)
-
-class Review(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    tutor_id = db.Column(db.Integer)
-    title = db.Column(db.String(250))
-    username = db.Column(db.String(64))
-    rating = db.Column(db.Integer)
-    content = db.Column(db.String(10000))
 
 subjects = ["All", "Math", "English", "Physics", "French", "Science", "Spanish", "Computer Science"]
 grades = ["All", "5", "6", "7", "8", "9", "10", "11", "12"]
@@ -93,18 +71,17 @@ def generateRandomTutor():
     with open('tutorRandomJSON/tutordescriptions.json') as f:
         json_file = json.load(f)
         desc = json_file[random.randint(0, 4)]
-    title = Tutor(name=name, email=f"{name.lower()}@fake_email.com", phone_number=str(random.randint(1000000000, 9999999999)), pay=random.randint(20, 40), description=desc, subject=subjects[random.randint(1, len(subjects)-1)], grade=grades[random.randint(1, len(grades)-1)], average_stars=0, image=imageURL, num_stars=0)
-    db.session.add(title)
-    db.session.commit()
+    tutor = {"name": name, "email": f"{name.lower()}@fake_email.com", "phone_number": str(random.randint(1000000000, 9999999999)), "pay": random.randint(20, 40), "description": desc, "subject": subjects[random.randint(1, len(subjects)-1)], "grade": grades[random.randint(1, len(grades)-1)], "average_stars": 0, "image": imageURL, "num_stars": 0}
+    tutors_db.insert_one(tutor)
 
 @app.route('/index.html')
 @app.route('/')
 def index():
     return render_template('index.html', session=session, title="Home")
 
-@app.route('/start-up')
-def start_up():
-    return render_template('start-up.html')
+# @app.route('/start-up')
+# def start_up():
+#     return render_template('start-up.html')
 
 @app.route('/become-tutor', methods=['GET', 'POST'])
 def become_tutor():
@@ -167,9 +144,20 @@ def become_tutor():
                 success = False
 
         if success:
-            tutor = Tutor(name=name, email=email, phone_number=phone_number, pay=pay, description=description, subject=subject, grade=grade, average_stars=average_stars, image=image, num_stars=num_stars)
-            db.session.add(tutor)
-            db.session.commit()
+            tutor = {
+                "name": name,
+                "email": email,
+                "phone_number": phone_number,
+                "pay": pay,
+                "description": description,
+                "subject": subject,
+                "grade": grade,
+                "average_stars": average_stars,
+                "image": image,
+                "num_stars": num_stars
+            }
+
+            tutors_db.insert_one(tutor)
 
             flash(f'You have now become a tutor! Go to grade {grade} {subject} to see yourself!', 'success')
             return redirect(url_for('tutors'))
@@ -182,26 +170,23 @@ def tutors():
     if not "user" in session:
         return redirect(url_for('index'))
 
-    tutors = []
-
     subject, grade = "All", "All"
-    tutors = Tutor.query.order_by(Tutor.average_stars).all()
+    tutors_list = tutors_db.find().sort("average_stars", -1)
 
     if request.method == 'POST':
         subject = request.form["subject"]
         grade = request.form["grade"]
 
         if subject == "All" and grade == "All":
-            tutors = Tutor.query.all()
+            tutors_list = tutors_db.find().sort("average_stars", -1)
         elif subject == "All" and grade != "All":
-            tutors = Tutor.query.filter_by(grade=grade).order_by(Tutor.average_stars).all()
+            tutors_list = tutors_db.find({"grade": grade}).sort("average_stars", -1)
         elif subject != "All" and grade == "All":
-            tutors = Tutor.query.filter_by(subject=subject).order_by(Tutor.average_stars).all()
+            tutors_list = tutors_db.find({"subject": subject}).sort("average_stars", -1)
         else:
-            tutors = Tutor.query.filter_by(subject=subject, grade=grade).order_by(Tutor.average_stars).all()
-
-    tutors.reverse()
-    return render_template('tutors.html', tutors=tutors, subjects=subjects, grades=grades, grade_selected=grade, subject_selected=subject, session=session, title="Tutors")
+            tutors_list = tutors_db.find({"subject": subject, "grade": grade}).sort("average_stars", -1)
+            
+    return render_template('tutors.html', tutors=tutors_list, subjects=subjects, grades=grades, grade_selected=grade, subject_selected=subject, session=session, title="Tutors")
 
 @app.route('/tutors/<id>', methods=['GET', 'POST'])
 def tutorName(id):
@@ -219,20 +204,47 @@ def tutorName(id):
         for i in range(1, 7):
             if f'star-{i}' in request.form: starsSelected = i
         
-        user = User.query.filter_by(email=session['user']).first()
-        review = Review(tutor_id=id, title=title.strip(), username=user.username, rating=starsSelected, content=review.strip())
+        user = users.find_one({"email": session['user']})
+        review = {
+            "tutor_id": id,
+            "title": title.strip(),
+            "username": user['username'],
+            "rating": starsSelected,
+            "content": review.strip()
+        }
 
-        tutor = Tutor.query.filter_by(id=id).first()
-        tutor.average_stars = round((tutor.num_stars * tutor.average_stars + starsSelected) / (tutor.num_stars + 1))
-        tutor.num_stars += 1
+        newObjectId = ObjectId(id)
 
-        db.session.add(review)
-        db.session.commit()
+        tutor = tutors_db.find_one(newObjectId)
+        new_average_stars = round((tutor['num_stars'] * tutor['average_stars'] + starsSelected) / (tutor['num_stars'] + 1))
+        new_num_stars = tutor['num_stars'] + 1
+
+        tutors_db.find_one_and_update(
+            {'_id': newObjectId}, 
+            {
+                '$set': {
+                    'average_stars': new_average_stars,
+                    'num_stars': new_num_stars
+                }
+            }
+        )
+
+        reviews.insert_one(review)
     
+    newObjectId = ObjectId(id)
+    tutor = tutors_db.find_one(newObjectId)
 
-    tutor = Tutor.query.filter_by(id=id).first()
-    reviews = Review.query.filter_by(tutor_id=id).all()
-    return render_template('specific_tutor.html', tutor=tutor, reviews=reviews, session=session, title=tutor.name)
+    if reviews.find_one({"tutor_id": id}):
+        reviews_exist = True 
+    else:
+        reviews_exist = False
+    reviews_list = reviews.find({"tutor_id": id})
+    if not reviews_exist:
+        reviews_list = None
+
+    print(tutor['average_stars'])
+    
+    return render_template('specific_tutor.html', tutor=tutor, reviews=reviews_list, session=session, title=tutor['name'])
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -244,7 +256,7 @@ def login():
         email = request.form["email"]
         password = toHash(request.form["password"])
 
-        if User.query.filter_by(email=email, password=password).first():
+        if users.find_one({"email": email, "password": password}):
             # if username and password correct
             session["user"] = email
             flash('You are logged in!', 'success')
@@ -315,11 +327,11 @@ def register():
             success = False
             flash('Invalid registration. Please try again.', 'danger')
 
-        if User.query.filter_by(username=username).first():
+        if users.find_one({"username": username}):
             # Username already exists code here
             success = False
             flash('Username already exists. Please try with a different username.', 'danger')
-        if User.query.filter_by(email=email).first():
+        if users.find_one({"email": email}):
             # Email already exists code here
             success = False
             flash('Email already exists. Please try with a different email.', 'danger')
@@ -328,9 +340,13 @@ def register():
         if success:
             hashPass = toHash(password)
 
-            user = User(username=username, password=hashPass, email=email)
-            db.session.add(user)
-            db.session.commit()
+            user = {
+                "username": username, 
+                "password": hashPass, 
+                "email": email
+            }
+
+            users.insert_one(user)
 
             flash('Your account has been created.', 'success')
             return redirect(url_for('login'))
@@ -356,5 +372,5 @@ def logout():
 
 if __name__ == '__main__':
 
-    #app.run(debug=True, host='0.0.0.0') # use in testing, uncomment next line in production
-    app.run(debug=False)
+    app.run(debug=True, host='0.0.0.0') # use in testing, uncomment next line in production
+    # app.run(debug=False)

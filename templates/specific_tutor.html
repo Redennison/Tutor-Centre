@@ -94,9 +94,7 @@
     >
     There are no reviews yet, be the first to write one!
     </div>
-
-{% endif %}
-
+{% else %}
 <div>
     {% for review in reviews %}
         <div class="alert alert-secondary mb-5"
@@ -121,6 +119,7 @@
         </div>
     {% endfor %}
 </div>
+{% endif %}
 <br>
 <br>
 
