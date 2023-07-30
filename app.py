@@ -11,7 +11,6 @@ Authors: Jason, Evan, Raghav, Amogh
 
 
 from flask import Flask, render_template, url_for, request, redirect, session, flash
-from flask_sqlalchemy import SQLAlchemy
 import hashlib
 import os
 import random
@@ -185,7 +184,7 @@ def tutors():
             tutors_list = tutors_db.find({"subject": subject}).sort("average_stars", -1)
         else:
             tutors_list = tutors_db.find({"subject": subject, "grade": grade}).sort("average_stars", -1)
-            
+
     return render_template('tutors.html', tutors=tutors_list, subjects=subjects, grades=grades, grade_selected=grade, subject_selected=subject, session=session, title="Tutors")
 
 @app.route('/tutors/<id>', methods=['GET', 'POST'])
