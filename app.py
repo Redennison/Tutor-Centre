@@ -73,9 +73,9 @@ def generateRandomTutor():
 def index():
     return render_template('index.html', session=session, title="Home")
 
-# @app.route('/start-up')
-# def start_up():
-#     return render_template('start-up.html')
+@app.route('/start-up')
+def start_up():
+    return render_template('start-up.html')
 
 @app.route('/become-tutor', methods=['GET', 'POST'])
 def become_tutor():
