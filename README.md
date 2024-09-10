@@ -1,7 +1,7 @@
 # TutorCenter
 
 ## Project Overview
-TutorCenter is a web application developed to connect students with freelance tutors. Built between [start date] and [end date], the platform allows users to easily find tutors based on subject and grade level, while also enabling tutors to build their reputation through a performance-based review and rating system.
+TutorCenter is a web application developed to connect students with freelance tutors. The platform allows users to easily find tutors based on subject and grade level, while also enabling tutors to build their reputation through a performance-based review and rating system.
 
 ## Key Features
 - **Tutor Matching System**: A web-based solution that helps students find freelance tutors based on their subject and grade level preferences.
